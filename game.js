@@ -2,6 +2,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const livesEl = document.getElementById('lives');
+const controlButtons = document.querySelectorAll('[data-direction]');
+const restartButton = document.getElementById('restartButton');
 
 const SCREEN_WIDTH = 600;
 const SCREEN_HEIGHT = 650;
@@ -400,21 +402,36 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+function setDirection(direction) {
+  pacman.nextDirection = direction;
+}
+
+function restartGame() {
+  score = 0;
+  lives = 3;
+  gameOver = false;
+  won = false;
+  resetPositions();
+  buildMazeState();
+  updateHud();
+}
+
 window.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') pacman.nextDirection = 'UP';
-  else if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') pacman.nextDirection = 'DOWN';
-  else if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') pacman.nextDirection = 'LEFT';
-  else if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') pacman.nextDirection = 'RIGHT';
-  else if (event.key.toLowerCase() === 'r' && (gameOver || won)) {
-    score = 0;
-    lives = 3;
-    gameOver = false;
-    won = false;
-    resetPositions();
-    buildMazeState();
-    updateHud();
-  }
+  if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w') setDirection('UP');
+  else if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') setDirection('DOWN');
+  else if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') setDirection('LEFT');
+  else if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') setDirection('RIGHT');
+  else if (event.key.toLowerCase() === 'r' && (gameOver || won)) restartGame();
 });
+
+controlButtons.forEach((button) => {
+  button.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    setDirection(button.dataset.direction);
+  });
+});
+
+restartButton.addEventListener('click', restartGame);
 
 buildMazeState();
 updateHud();
