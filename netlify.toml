@@ -1,0 +1,11 @@
+[build]
+  command = "python -m pip install pygbag && cd pacman && python -m pygbag --no_opt ."
+  publish = "pacman/build/web"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
+
+[[headers]]
+  for = "*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
